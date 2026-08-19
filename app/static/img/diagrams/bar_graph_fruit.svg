@@ -1,0 +1,41 @@
+<svg viewBox="0 0 480 340" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, sans-serif">
+  <rect width="480" height="340" fill="#ffffff"/>
+  <text x="240" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#1f2937">Favorite Fruit Survey (25 students)</text>
+
+  <line x1="70" y1="40" x2="70" y2="270" stroke="#6b7280" stroke-width="2"/>
+  <line x1="70" y1="270" x2="450" y2="270" stroke="#6b7280" stroke-width="2"/>
+
+  <g font-size="12" fill="#6b7280">
+    <text x="60" y="274" text-anchor="end">0</text>
+    <text x="60" y="228" text-anchor="end">2</text>
+    <text x="60" y="182" text-anchor="end">4</text>
+    <text x="60" y="136" text-anchor="end">6</text>
+    <text x="60" y="90" text-anchor="end">8</text>
+    <text x="60" y="44" text-anchor="end">10</text>
+  </g>
+  <g stroke="#e5e7eb" stroke-width="1">
+    <line x1="70" y1="224" x2="450" y2="224"/>
+    <line x1="70" y1="178" x2="450" y2="178"/>
+    <line x1="70" y1="132" x2="450" y2="132"/>
+    <line x1="70" y1="86" x2="450" y2="86"/>
+    <line x1="70" y1="40" x2="450" y2="40"/>
+  </g>
+
+  <rect x="105" y="86" width="60" height="184" fill="#f59e0b"/>
+  <text x="135" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2937">8</text>
+  <text x="135" y="292" text-anchor="middle" font-size="13" fill="#1f2937">Apples</text>
+
+  <rect x="195" y="155" width="60" height="115" fill="#eab308"/>
+  <text x="225" y="147" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2937">5</text>
+  <text x="225" y="292" text-anchor="middle" font-size="13" fill="#1f2937">Bananas</text>
+
+  <rect x="285" y="201" width="60" height="69" fill="#8b5cf6"/>
+  <text x="315" y="193" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2937">3</text>
+  <text x="315" y="292" text-anchor="middle" font-size="13" fill="#1f2937">Grapes</text>
+
+  <rect x="375" y="132" width="60" height="138" fill="#fb923c"/>
+  <text x="405" y="124" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2937">6</text>
+  <text x="405" y="292" text-anchor="middle" font-size="13" fill="#1f2937">Oranges</text>
+
+  <text x="20" y="160" font-size="13" fill="#6b7280" transform="rotate(-90 20 160)">Number of students</text>
+</svg>

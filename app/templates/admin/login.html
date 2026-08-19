@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Admin Login{% endblock %}
+{% block content %}
+  <section class="login-wrap">
+    <div class="quiz-panel login-panel">
+      <h1>🔒 Admin Login</h1>
+      <p>Manage Questions is for parents/teachers only. Enter the admin credentials to continue.</p>
+      {% if error %}<p class="flash flash-error">{{ error }}</p>{% endif %}
+      <form method="post">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" required autofocus>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button type="submit" class="primary-btn">Log In</button>
+      </form>
+      <a class="back-link" href="{{ url_for('main.index') }}">&larr; Back to quizzes</a>
+    </div>
+  </section>
+{% endblock %}

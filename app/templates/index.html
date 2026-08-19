@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}5th Grade Quiz Zone{% endblock %}
+{% block content %}
+  <section class="hero">
+    <h1>Ready to practice? 🚀</h1>
+    <p>Pick a subject below and answer TEKS-aligned questions built for 5th graders in Texas.</p>
+  </section>
+
+  <section class="subject-grid">
+    {% for subject in subjects %}
+      <a class="subject-card" href="{{ url_for('main.quiz', slug=subject['slug']) }}"
+         style="--subject-color: {{ subject['color'] }};">
+        <span class="subject-icon">{{ subject['icon'] }}</span>
+        <h2>{{ subject['name'] }}</h2>
+        <p>{{ counts.get(subject['id'], 0) }} questions available</p>
+        <span class="start-btn">Start Quiz</span>
+      </a>
+    {% endfor %}
+  </section>
+{% endblock %}

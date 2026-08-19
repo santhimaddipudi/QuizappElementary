@@ -1,0 +1,40 @@
+<svg viewBox="0 0 480 400" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, sans-serif">
+  <rect width="480" height="400" fill="#ffffff"/>
+  <text x="240" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1f2937">Parts of a Plant</text>
+
+  <rect x="0" y="280" width="480" height="120" fill="#c88b4a"/>
+
+  <circle cx="240" cy="90" r="30" fill="#f472b6" stroke="#db2777" stroke-width="2"/>
+  <circle cx="220" cy="80" r="18" fill="#fb7185"/>
+  <circle cx="260" cy="80" r="18" fill="#fb7185"/>
+  <circle cx="220" cy="105" r="18" fill="#fb7185"/>
+  <circle cx="260" cy="105" r="18" fill="#fb7185"/>
+  <circle cx="240" cy="92" r="12" fill="#fde047"/>
+
+  <line x1="240" y1="118" x2="240" y2="280" stroke="#16a34a" stroke-width="8"/>
+
+  <ellipse cx="185" cy="190" rx="45" ry="20" fill="#22c55e" transform="rotate(-25 185 190)"/>
+  <ellipse cx="295" cy="220" rx="45" ry="20" fill="#22c55e" transform="rotate(25 295 220)"/>
+
+  <path d="M240,280 C210,310 160,320 110,340" stroke="#7a4a20" stroke-width="4" fill="none"/>
+  <path d="M240,280 C270,310 320,320 370,340" stroke="#7a4a20" stroke-width="4" fill="none"/>
+  <path d="M240,280 C230,320 235,350 220,375" stroke="#7a4a20" stroke-width="4" fill="none"/>
+  <path d="M240,280 C250,320 245,350 265,375" stroke="#7a4a20" stroke-width="4" fill="none"/>
+
+  <circle cx="240" cy="95" r="10" fill="#4f46e5"/>
+  <text x="255" y="60" font-size="15" font-weight="700" fill="#4f46e5">4</text>
+  <line x1="255" y1="63" x2="245" y2="82" stroke="#4f46e5" stroke-width="2"/>
+
+  <circle cx="240" cy="200" r="10" fill="#4f46e5"/>
+  <text x="200" y="150" font-size="15" font-weight="700" fill="#4f46e5">3</text>
+  <line x1="200" y1="153" x2="200" y2="185" stroke="#4f46e5" stroke-width="2"/>
+
+  <text x="360" y="255" font-size="15" font-weight="700" fill="#4f46e5">2</text>
+  <line x1="358" y1="252" x2="248" y2="230" stroke="#4f46e5" stroke-width="2"/>
+
+  <text x="120" y="330" font-size="15" font-weight="700" fill="#4f46e5">1</text>
+  <line x1="130" y1="325" x2="180" y2="315" stroke="#4f46e5" stroke-width="2"/>
+
+  <rect x="10" y="360" width="460" height="34" fill="#f1f5f9" rx="8"/>
+  <text x="24" y="382" font-size="13" fill="#1f2937">1 = Roots &#183; 2 = Stem &#183; 3 = Leaves &#183; 4 = Flower</text>
+</svg>

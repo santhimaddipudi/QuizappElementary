@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Import Questions{% endblock %}
+{% block content %}
+  <section class="admin-header">
+    <h1>Import Questions from a Document</h1>
+  </section>
+
+  <div class="import-instructions">
+    <p>Upload a <strong>.docx</strong> or <strong>.pdf</strong> file. Each question must follow this format
+       (blank line between questions):</p>
+    <pre class="format-example">Q: What is 5 + 3?
+A) 6
+B) 7
+C) 8
+D) 9
+Answer: C
+Explanation: 5 + 3 = 8.
+
+Q: Round 4,827 to the nearest hundred.
+A) 4,800
+B) 4,830
+C) 4,900
+D) 5,000
+Answer: A
+Topic: Number &amp; Operations
+Difficulty: easy</pre>
+    <ul class="format-notes">
+      <li><strong>Explanation, Topic, and Difficulty</strong> lines are optional.</li>
+      <li><strong>Topic</strong> must exactly match one of the subject's existing topic names, or it falls back to the topic you choose below.</li>
+      <li><strong>Difficulty</strong> must be <code>easy</code>, <code>medium</code>, or <code>hard</code> (defaults to medium).</li>
+      <li>Only <strong>text-based</strong> PDFs work — a scanned/photographed PDF has no extractable text.</li>
+      <li>Nothing is saved until you review a preview and confirm the import.</li>
+    </ul>
+    <p class="format-notes">
+      Want a ready-made example to start from? See <code>samples/sample_questions.docx</code> and
+      <code>samples/sample_questions.pdf</code> in the project folder — both are pre-filled with two
+      correctly formatted example questions.
+    </p>
+  </div>
+
+  <form class="question-form" method="post" action="{{ url_for('admin.import_preview') }}" enctype="multipart/form-data">
+    <label for="subject_id">Subject</label>
+    <select id="subject_id" name="subject_id" required onchange="showTopics()">
+      {% for s in subjects %}
+        <option value="{{ s['id'] }}">{{ s['icon'] }} {{ s['name'] }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="default_topic_id">Default topic (used when a question has no matching Topic: line)</label>
+    <select id="default_topic_id" name="default_topic_id">
+      <option value="">— No specific topic —</option>
+    </select>
+
+    <label for="document">Document (.docx or .pdf, max 5 MB)</label>
+    <input id="document" name="document" type="file" accept=".docx,.pdf" required>
+
+    <div class="form-actions">
+      <button type="submit" class="primary-btn">Preview Import</button>
+      <a class="back-link" href="{{ url_for('admin.list_questions') }}">Cancel</a>
+    </div>
+  </form>
+
+  <script>
+    const topicsBySubject = {
+      {% for subject_id, topics in topics_by_subject.items() %}
+        "{{ subject_id }}": [
+          {% for t in topics %}
+            { id: {{ t['id'] }}, name: {{ t['name']|tojson }} }{{ ',' if not loop.last }}
+          {% endfor %}
+        ]{{ ',' if not loop.last }}
+      {% endfor %}
+    };
+    function showTopics() {
+      const subjectId = document.getElementById('subject_id').value;
+      const topicSelect = document.getElementById('default_topic_id');
+      const topics = topicsBySubject[subjectId] || [];
+      topicSelect.innerHTML = '<option value="">— No specific topic —</option>';
+      topics.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.name;
+        topicSelect.appendChild(opt);
+      });
+    }
+    showTopics();
+  </script>
+{% endblock %}

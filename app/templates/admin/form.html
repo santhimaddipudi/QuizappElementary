@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if question else 'Add' }} Question{% endblock %}
+{% block content %}
+  <section class="admin-header">
+    <h1>{{ 'Edit' if question else 'Add' }} Question</h1>
+  </section>
+
+  <form class="question-form" method="post">
+    <label for="subject_id">Subject</label>
+    <select id="subject_id" name="subject_id" required onchange="showTopics()">
+      {% for s in subjects %}
+        <option value="{{ s['id'] }}"
+          {% if question and question['subject_id'] == s['id'] %}selected{% endif %}>
+          {{ s['icon'] }} {{ s['name'] }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <label for="topic_id">Topic (TEKS strand)</label>
+    <select id="topic_id" name="topic_id">
+      <option value="">— No specific topic —</option>
+    </select>
+
+    <label for="question_text">Question</label>
+    <textarea id="question_text" name="question_text" rows="2" required>{{ question['question_text'] if question else '' }}</textarea>
+
+    <div class="choice-grid">
+      <div>
+        <label for="choice_a">Choice A</label>
+        <input id="choice_a" name="choice_a" required value="{{ question['choice_a'] if question else '' }}">
+      </div>
+      <div>
+        <label for="choice_b">Choice B</label>
+        <input id="choice_b" name="choice_b" required value="{{ question['choice_b'] if question else '' }}">
+      </div>
+      <div>
+        <label for="choice_c">Choice C</label>
+        <input id="choice_c" name="choice_c" required value="{{ question['choice_c'] if question else '' }}">
+      </div>
+      <div>
+        <label for="choice_d">Choice D</label>
+        <input id="choice_d" name="choice_d" required value="{{ question['choice_d'] if question else '' }}">
+      </div>
+    </div>
+
+    <label for="correct_choice">Correct Choice</label>
+    <select id="correct_choice" name="correct_choice" required>
+      {% for letter in ['A', 'B', 'C', 'D'] %}
+        <option value="{{ letter }}" {% if question and question['correct_choice'] == letter %}selected{% endif %}>
+          {{ letter }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <label for="image_path">Diagram/chart image (optional)</label>
+    <input id="image_path" name="image_path" placeholder="img/diagrams/your_file.svg"
+           value="{{ question['image_path'] if question and question['image_path'] else '' }}"
+           oninput="updateImagePreview()">
+    <p class="field-hint">
+      Path to an image file inside <code>app/static/</code> — e.g. drop a PNG/SVG into
+      <code>app/static/img/diagrams/</code> and enter <code>img/diagrams/your_file.svg</code> here.
+      Leave blank for a text-only question.
+    </p>
+    <img id="image-preview" class="image-preview" alt="Preview"
+         src="{{ url_for('static', filename=question['image_path']) if question and question['image_path'] else '' }}"
+         {{ '' if question and question['image_path'] else 'hidden' }}>
+
+    <label for="explanation">Explanation (shown after answering)</label>
+    <textarea id="explanation" name="explanation" rows="2">{{ question['explanation'] if question else '' }}</textarea>
+
+    <label for="difficulty">Difficulty</label>
+    <select id="difficulty" name="difficulty">
+      {% for level in ['easy', 'medium', 'hard'] %}
+        <option value="{{ level }}" {% if question and question['difficulty'] == level %}selected{% endif %}>
+          {{ level|capitalize }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <div class="form-actions">
+      <button type="submit" class="primary-btn">{{ 'Save Changes' if question else 'Add Question' }}</button>
+      <a class="back-link" href="{{ url_for('admin.list_questions') }}">Cancel</a>
+    </div>
+  </form>
+
+  <script>
+    const topicsBySubject = {
+      {% for subject_id, topics in topics_by_subject.items() %}
+        "{{ subject_id }}": [
+          {% for t in topics %}
+            { id: {{ t['id'] }}, name: {{ t['name']|tojson }} }{{ ',' if not loop.last }}
+          {% endfor %}
+        ]{{ ',' if not loop.last }}
+      {% endfor %}
+    };
+    const selectedTopicId = {{ question['topic_id']|tojson if question else 'null' }};
+
+    function showTopics() {
+      const subjectId = document.getElementById('subject_id').value;
+      const topicSelect = document.getElementById('topic_id');
+      const topics = topicsBySubject[subjectId] || [];
+      topicSelect.innerHTML = '<option value="">— No specific topic —</option>';
+      topics.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.name;
+        if (selectedTopicId === t.id) opt.selected = true;
+        topicSelect.appendChild(opt);
+      });
+    }
+    showTopics();
+
+    function updateImagePreview() {
+      const path = document.getElementById('image_path').value.trim();
+      const preview = document.getElementById('image-preview');
+      if (path) {
+        preview.src = "{{ url_for('static', filename='') }}" + path;
+        preview.hidden = false;
+      } else {
+        preview.hidden = true;
+      }
+    }
+  </script>
+{% endblock %}

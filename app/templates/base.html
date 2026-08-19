@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}5th Grade Quiz Zone{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{{ url_for('main.index') }}">🎓 5th Grade Quiz Zone</a>
+    <nav>
+      <a href="{{ url_for('main.index') }}">Home</a>
+      {% if session.get('is_admin') %}
+        <a href="{{ url_for('admin.list_questions') }}">Manage Questions</a>
+        <form method="post" action="{{ url_for('admin.logout') }}" class="nav-logout-form">
+          <button type="submit" class="nav-logout-btn">Logout</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('admin.login') }}">Admin Login</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-container">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>Built for Texas TEKS-aligned 5th grade practice · Math · Science · English</p>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+instance/*.db
+instance/backups/
+instance/import_tmp/
+.env

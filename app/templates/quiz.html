@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ subject['name'] }} Quiz{% endblock %}
+{% block content %}
+  <section class="quiz-wrap" style="--subject-color: {{ subject['color'] }};"
+            data-subject-slug="{{ subject['slug'] }}" data-subject-name="{{ subject['name'] }}">
+
+    <div id="quiz-intro" class="quiz-panel">
+      <h1>{{ subject['icon'] }} {{ subject['name'] }} Quiz</h1>
+      <p>Answer each question and get instant feedback. Do your best!</p>
+      <label for="student-name">Your name (optional)</label>
+      <input id="student-name" type="text" placeholder="e.g. Alex" maxlength="40">
+      <label for="quiz-length">Number of questions</label>
+      <select id="quiz-length">
+        <option value="10" selected>10 questions (quick practice)</option>
+        <option value="20">20 questions</option>
+        <option value="50">50 questions (long practice)</option>
+      </select>
+      <button id="start-btn" class="primary-btn">Start Quiz</button>
+      <a class="back-link" href="{{ url_for('main.index') }}">&larr; Back to subjects</a>
+    </div>
+
+    <div id="quiz-question" class="quiz-panel" hidden>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      <p id="question-meta" class="question-meta"></p>
+      <h2 id="question-text"></h2>
+      <div id="question-image-wrap" class="question-image-wrap" hidden>
+        <img id="question-image" alt="">
+      </div>
+      <div id="choices" class="choices"></div>
+      <p id="feedback" class="feedback" hidden></p>
+      <button id="next-btn" class="primary-btn" hidden>Next Question</button>
+    </div>
+
+    <div id="quiz-results" class="quiz-panel" hidden>
+      <h1>Great job! 🎉</h1>
+      <p id="score-summary" class="score-summary"></p>
+      <div id="results-list" class="results-list"></div>
+      <button id="retry-btn" class="primary-btn">Try Again</button>
+      <a class="back-link" href="{{ url_for('main.index') }}">&larr; Back to subjects</a>
+    </div>
+  </section>
+{% endblock %}
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
+{% endblock %}

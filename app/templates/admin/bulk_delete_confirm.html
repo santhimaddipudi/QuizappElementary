@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Confirm Bulk Delete{% endblock %}
+{% block content %}
+  <section class="admin-header">
+    <h1>Confirm Bulk Delete</h1>
+  </section>
+
+  <div class="danger-box">
+    <p>This will permanently delete <strong>{{ count }}</strong> question(s) from
+       <strong>{{ subject['icon'] }} {{ subject['name'] }}</strong>{% if topic %} / <strong>{{ topic['name'] }}</strong>{% endif %}.</p>
+    <p>A backup of the entire database will be saved to <code>instance/backups/</code> first, but this action
+       cannot be undone from within the app.</p>
+
+    <form method="post" action="{{ url_for('admin.bulk_delete_confirm') }}">
+      <input type="hidden" name="subject_id" value="{{ subject['id'] }}">
+      <input type="hidden" name="topic_id" value="{{ topic_id }}">
+      <label for="confirm_text">Type <strong>DELETE</strong> to confirm:</label>
+      <input id="confirm_text" name="confirm_text" type="text" autocomplete="off" placeholder="DELETE">
+      <div class="form-actions">
+        <button type="submit" class="danger-btn">Permanently Delete {{ count }} Question(s)</button>
+        <a class="back-link" href="{{ url_for('admin.list_questions') }}">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

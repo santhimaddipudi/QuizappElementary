@@ -1,0 +1,33 @@
+<svg viewBox="0 0 560 380" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Verdana, sans-serif">
+  <rect width="560" height="380" fill="#eaf4ff"/>
+  <text x="280" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1f2937">The Water Cycle</text>
+
+  <circle cx="480" cy="70" r="34" fill="#fbbf24"/>
+
+  <ellipse cx="280" cy="90" rx="90" ry="34" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+  <ellipse cx="220" cy="80" rx="55" ry="26" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <ellipse cx="340" cy="80" rx="55" ry="26" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+
+  <rect x="0" y="300" width="560" height="80" fill="#38bdf8"/>
+  <rect x="0" y="300" width="560" height="6" fill="#0ea5e9"/>
+
+  <defs>
+    <marker id="warrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1d4ed8"/>
+    </marker>
+  </defs>
+
+  <path d="M120,300 C120,220 170,180 200,130" stroke="#1d4ed8" stroke-width="3" fill="none" marker-end="url(#warrow)" stroke-dasharray="6 5"/>
+  <text x="95" y="220" font-size="16" font-weight="700" fill="#1d4ed8">A</text>
+
+  <line x1="260" y1="130" x2="245" y2="180" stroke="#1d4ed8" stroke-width="3" marker-end="url(#warrow)"/>
+  <line x1="290" y1="130" x2="280" y2="180" stroke="#1d4ed8" stroke-width="3" marker-end="url(#warrow)"/>
+  <line x1="320" y1="130" x2="315" y2="180" stroke="#1d4ed8" stroke-width="3" marker-end="url(#warrow)"/>
+  <text x="330" y="165" font-size="16" font-weight="700" fill="#1d4ed8">B</text>
+
+  <path d="M270,260 C300,275 380,270 430,300" stroke="#1d4ed8" stroke-width="3" fill="none" marker-end="url(#warrow)" stroke-dasharray="6 5"/>
+  <text x="330" y="290" font-size="16" font-weight="700" fill="#1d4ed8">C</text>
+
+  <rect x="20" y="330" width="520" height="40" fill="#ffffffcc" rx="8"/>
+  <text x="35" y="355" font-size="14" fill="#1f2937">A = water rises as vapor &#183; B = water falls as rain &#183; C = water flows back to collect</text>
+</svg>

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Preview Import{% endblock %}
+{% block content %}
+  <section class="admin-header">
+    <h1>Preview Import: {{ filename }}</h1>
+  </section>
+
+  <p>Subject: <strong>{{ subject['icon'] }} {{ subject['name'] }}</strong></p>
+  <p><strong>{{ questions|length }}</strong> question(s) parsed successfully.
+     {% if errors %}<strong>{{ errors|length }}</strong> question(s) could not be parsed (see below) and will be skipped.{% endif %}</p>
+
+  {% if errors %}
+    <div class="import-errors">
+      <h2>Skipped (fix these in your document and re-upload if you want them included)</h2>
+      <ul>
+        {% for e in errors %}<li>{{ e }}</li>{% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if questions %}
+    <table class="admin-table">
+      <thead>
+        <tr><th>#</th><th>Question</th><th>Choices</th><th>Answer</th><th>Topic</th><th>Difficulty</th></tr>
+      </thead>
+      <tbody>
+        {% for q in questions %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td class="q-text">{{ q['question_text'] }}</td>
+            <td>A) {{ q['choice_a'] }}<br>B) {{ q['choice_b'] }}<br>C) {{ q['choice_c'] }}<br>D) {{ q['choice_d'] }}</td>
+            <td>{{ q['correct_choice'] }}</td>
+            <td>{{ q['topic_name'] or '—' }}</td>
+            <td><span class="badge badge-{{ q['difficulty'] }}">{{ q['difficulty'] }}</span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <form method="post" action="{{ url_for('admin.import_confirm') }}" class="form-actions">
+      <input type="hidden" name="token" value="{{ token }}">
+      <button type="submit" class="primary-btn">Confirm Import ({{ questions|length }} questions)</button>
+    </form>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('admin.import_cancel') }}" class="form-actions">
+    <input type="hidden" name="token" value="{{ token }}">
+    <button type="submit" class="link-btn">Cancel — don't import anything</button>
+  </form>
+{% endblock %}

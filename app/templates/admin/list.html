@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Manage Questions{% endblock %}
+{% block content %}
+  <section class="admin-header">
+    <h1>Manage Questions</h1>
+    <div class="header-actions">
+      <a class="primary-btn" href="{{ url_for('admin.new_question') }}">+ Add Question</a>
+      <a class="secondary-btn" href="{{ url_for('admin.import_form') }}">Import from Document</a>
+    </div>
+  </section>
+
+  <form class="filter-bar" method="get">
+    <label for="subject">Filter by subject:</label>
+    <select id="subject" name="subject" onchange="this.form.submit()">
+      <option value="" {% if not selected_subject %}selected{% endif %}>All subjects</option>
+      {% for s in subjects %}
+        <option value="{{ s['slug'] }}" {% if selected_subject == s['slug'] %}selected{% endif %}>
+          {{ s['icon'] }} {{ s['name'] }}
+        </option>
+      {% endfor %}
+    </select>
+  </form>
+
+  <details class="bulk-delete-panel">
+    <summary>Bulk delete questions by subject/topic</summary>
+    <form method="post" action="{{ url_for('admin.bulk_delete_preview') }}" class="bulk-delete-form">
+      <label for="bd_subject_id">Subject</label>
+      <select id="bd_subject_id" name="subject_id" required onchange="showBulkDeleteTopics()">
+        <option value="">Choose a subject…</option>
+        {% for s in subjects %}
+          <option value="{{ s['id'] }}">{{ s['icon'] }} {{ s['name'] }}</option>
+        {% endfor %}
+      </select>
+      <label for="bd_topic_id">Topic (optional — leave blank to delete all in the subject)</label>
+      <select id="bd_topic_id" name="topic_id">
+        <option value="">— All topics —</option>
+      </select>
+      <button type="submit" class="danger-btn">Review Bulk Delete</button>
+    </form>
+  </details>
+
+  <script>
+    const bulkDeleteTopicsBySubject = {
+      {% for s in subjects %}
+        "{{ s['id'] }}": [
+          {% for t in topics_by_subject.get(s['id'], []) %}
+            { id: {{ t['id'] }}, name: {{ t['name']|tojson }} }{{ ',' if not loop.last }}
+          {% endfor %}
+        ]{{ ',' if not loop.last }}
+      {% endfor %}
+    };
+    function showBulkDeleteTopics() {
+      const subjectId = document.getElementById('bd_subject_id').value;
+      const topicSelect = document.getElementById('bd_topic_id');
+      const topics = bulkDeleteTopicsBySubject[subjectId] || [];
+      topicSelect.innerHTML = '<option value="">— All topics —</option>';
+      topics.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.name;
+        topicSelect.appendChild(opt);
+      });
+    }
+  </script>
+
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Topic</th>
+        <th>Question</th>
+        <th>Answer</th>
+        <th>Difficulty</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for q in questions %}
+        <tr>
+          <td>{{ q['subject_name'] }}</td>
+          <td>{{ q['topic_name'] or '—' }}</td>
+          <td class="q-text">{{ q['question_text'] }}{% if q['image_path'] %} <span class="badge badge-image" title="Has a diagram/chart image">🖼️</span>{% endif %}</td>
+          <td>{{ q['correct_choice'] }}</td>
+          <td><span class="badge badge-{{ q['difficulty'] }}">{{ q['difficulty'] }}</span></td>
+          <td class="row-actions">
+            <a href="{{ url_for('admin.edit_question', question_id=q['id']) }}">Edit</a>
+            <form method="post" action="{{ url_for('admin.delete_question', question_id=q['id']) }}"
+                  onsubmit="return confirm('Delete this question?');">
+              <button type="submit" class="link-btn">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6">No questions yet. Add one to get started.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
