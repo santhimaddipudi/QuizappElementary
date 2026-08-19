@@ -1,3 +1,4 @@
+import base64
 import json
 import shutil
 import uuid
@@ -7,11 +8,36 @@ from pathlib import Path
 from flask import Blueprint, current_app, flash, redirect, render_template, request, session, url_for
 
 from app.db import get_db
-from app.importers import ImportError_, extract_text, parse_questions_text
+from app.importers import ImportError_, extract_content, parse_questions_text
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # 5 MB
+MAX_IMAGE_UPLOAD_BYTES = 5 * 1024 * 1024  # 5 MB
+ALLOWED_IMAGE_EXTS = {"png", "jpg", "jpeg", "gif", "webp", "svg"}
+
+
+def _uploads_img_dir():
+    path = Path(current_app.root_path) / "static" / "img" / "uploads"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def _save_image_upload(file_storage):
+    """Saves an admin-uploaded FileStorage into static/img/uploads/ and returns
+    its relative path (for the questions.image_path column), or None if no
+    file was chosen. Raises ValueError on an unsupported/oversized file."""
+    if not file_storage or not file_storage.filename:
+        return None
+    ext = file_storage.filename.rsplit(".", 1)[-1].lower() if "." in file_storage.filename else ""
+    if ext not in ALLOWED_IMAGE_EXTS:
+        raise ValueError("Images must be one of: " + ", ".join(sorted(ALLOWED_IMAGE_EXTS)))
+    data = file_storage.read()
+    if len(data) > MAX_IMAGE_UPLOAD_BYTES:
+        raise ValueError("That image is too large (max 5 MB).")
+    fname = f"{uuid.uuid4().hex}.{ext}"
+    (_uploads_img_dir() / fname).write_bytes(data)
+    return f"img/uploads/{fname}"
 
 
 @bp.before_request
@@ -109,6 +135,15 @@ def new_question():
 
     if request.method == "POST":
         form = request.form
+        try:
+            uploaded_path = _save_image_upload(request.files.get("image_file"))
+        except ValueError as exc:
+            flash(str(exc), "error")
+            topics_by_subject = {s["id"]: _topics_for_subject(db, s["id"]) for s in subjects}
+            return render_template(
+                "admin/form.html", question=None, subjects=subjects, topics_by_subject=topics_by_subject
+            )
+        image_path = uploaded_path or (form.get("image_path", "").strip() or None)
         db.execute(
             """INSERT INTO questions
                (subject_id, topic_id, question_text, choice_a, choice_b, choice_c, choice_d,
@@ -125,7 +160,7 @@ def new_question():
                 form["correct_choice"],
                 form.get("explanation", "").strip(),
                 form.get("difficulty", "medium"),
-                form.get("image_path", "").strip() or None,
+                image_path,
             ),
         )
         db.commit()
@@ -145,6 +180,12 @@ def edit_question(question_id):
 
     if request.method == "POST":
         form = request.form
+        try:
+            uploaded_path = _save_image_upload(request.files.get("image_file"))
+        except ValueError as exc:
+            flash(str(exc), "error")
+            return redirect(url_for("admin.edit_question", question_id=question_id))
+        image_path = uploaded_path or (form.get("image_path", "").strip() or None)
         db.execute(
             """UPDATE questions SET
                    subject_id = ?, topic_id = ?, question_text = ?, choice_a = ?, choice_b = ?,
@@ -162,7 +203,7 @@ def edit_question(question_id):
                 form["correct_choice"],
                 form.get("explanation", "").strip(),
                 form.get("difficulty", "medium"),
-                form.get("image_path", "").strip() or None,
+                image_path,
                 question_id,
             ),
         )
@@ -223,8 +264,8 @@ def import_preview():
         return redirect(url_for("admin.import_form"))
 
     try:
-        text = extract_text(uploaded.filename, file_bytes)
-        questions, errors = parse_questions_text(text)
+        text, images = extract_content(uploaded.filename, file_bytes)
+        questions, errors = parse_questions_text(text, images)
     except ImportError_ as exc:
         flash(str(exc), "error")
         return redirect(url_for("admin.import_form"))
@@ -238,6 +279,15 @@ def import_preview():
         matched_topic_id = topic_by_name.get(override.strip().lower()) if override else None
         q["topic_id"] = matched_topic_id or (int(default_topic_id) if default_topic_id else None)
         q["topic_name"] = next((t["name"] for t in topics if t["id"] == q["topic_id"]), None)
+
+        img_idx = q.pop("image_index", None)
+        if img_idx is not None:
+            img = images[img_idx]
+            q["image_b64"] = base64.b64encode(img["data"]).decode("ascii")
+            q["image_ext"] = img["ext"]
+        else:
+            q["image_b64"] = None
+            q["image_ext"] = None
 
     token = uuid.uuid4().hex
     payload = {"subject_id": int(subject_id), "questions": questions}
@@ -268,14 +318,20 @@ def import_confirm():
 
     db = get_db()
     for q in questions:
+        image_path = None
+        if q.get("image_b64"):
+            fname = f"{uuid.uuid4().hex}.{q['image_ext']}"
+            (_uploads_img_dir() / fname).write_bytes(base64.b64decode(q["image_b64"]))
+            image_path = f"img/uploads/{fname}"
         db.execute(
             """INSERT INTO questions
                (subject_id, topic_id, question_text, choice_a, choice_b, choice_c, choice_d,
                 correct_choice, explanation, difficulty, image_path)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)""",
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 subject_id, q.get("topic_id"), q["question_text"], q["choice_a"], q["choice_b"],
                 q["choice_c"], q["choice_d"], q["correct_choice"], q["explanation"], q["difficulty"],
+                image_path,
             ),
         )
     db.commit()

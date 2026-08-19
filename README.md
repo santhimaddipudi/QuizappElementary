@@ -8,7 +8,10 @@ at any time through the built-in admin pages — no code changes required.
 ## Features
 
 - Home page with a subject picker (Math / Science / English) and live question counts
-- One-question-at-a-time quiz flow with instant feedback and an explanation for each answer
+- One-question-at-a-time quiz flow with instant feedback and an explanation for each answer;
+  students must pick an answer before they can move to the next question
+- Questions can include an image (diagram, chart, photo, etc.) that shows above the answer
+  choices and again in the results review
 - Score summary at the end of each quiz, with a full review of every question
 - Admin pages are login-protected — kids can browse and take quizzes freely, but everything under
   `/admin` requires the admin username/password (see **Admin login** below)
@@ -82,6 +85,9 @@ Go to **Manage Questions** in the nav bar (`/admin/questions`) to:
 - Add a new question (pick subject, topic/TEKS strand, 4 choices, correct
   answer, an explanation, and a difficulty level)
 - Edit or delete any existing question
+- Optionally attach an image to a question — upload a PNG/JPG/GIF/WEBP/SVG right from the
+  form and it's saved automatically and shown in the quiz. (Advanced: you can instead type
+  the path to a file you've already placed under `app/static/`, e.g. `img/diagrams/foo.svg`.)
 
 Changes are saved straight to the database and show up in quizzes immediately.
 
@@ -107,10 +113,14 @@ Explanation: 5 + 3 = 8.
 - `Difficulty:` must be `easy`, `medium`, or `hard` (defaults to `medium`).
 - Only **text-based** PDFs work — a scanned/photographed PDF has no
   extractable text and will be rejected with an explanation.
+- **Images in `.docx` files:** a picture placed directly above or inside a question is
+  automatically detected and attached to that question — no special formatting needed.
+  This only works for `.docx` (not `.pdf`); add an image afterwards from the question's
+  Edit page if you imported from a PDF.
 
 Nothing is written to the database until you review a **preview** (showing
-every parsed question, plus a list of anything that failed to parse and why)
-and click **Confirm Import**.
+every parsed question — including a thumbnail of any detected image — plus a list of
+anything that failed to parse and why) and click **Confirm Import**.
 
 Two ready-made examples (one question about math, one about science, using
 every optional field) are in [`samples/sample_questions.docx`](samples/sample_questions.docx)

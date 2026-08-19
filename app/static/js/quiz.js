@@ -29,6 +29,7 @@
   let currentIndex = 0;
   let answers = [];
   let cycleReset = false;
+  let selectedChoice = null;
 
   const seenKey = `quizSeen:${subjectSlug}`;
 
@@ -89,9 +90,9 @@
       questionImage.removeAttribute("src");
     }
 
+    selectedChoice = null;
     feedbackEl.hidden = true;
     feedbackEl.className = "feedback";
-    nextBtn.hidden = true;
 
     choicesEl.innerHTML = "";
     const letters = ["A", "B", "C", "D"];
@@ -111,6 +112,7 @@
     const q = questions[currentIndex];
     Array.from(choicesEl.children).forEach((b) => (b.disabled = true));
 
+    selectedChoice = letter;
     answers.push({ question_id: q.id, choice: letter, image_path: q.image_path || null });
 
     // Optimistic client-side feedback; the server re-checks on submit.
@@ -118,8 +120,17 @@
 
     feedbackEl.hidden = false;
     feedbackEl.textContent = "Answer recorded! Click Next to continue.";
-    feedbackEl.classList.add("correct");
-    nextBtn.hidden = false;
+    feedbackEl.className = "feedback correct";
+  }
+
+  function handleNextClick() {
+    if (!selectedChoice) {
+      feedbackEl.hidden = false;
+      feedbackEl.textContent = "Please select an option before continuing.";
+      feedbackEl.className = "feedback warning";
+      return;
+    }
+    nextQuestion();
   }
 
   function nextQuestion() {
@@ -183,7 +194,7 @@
   }
 
   startBtn.addEventListener("click", startQuiz);
-  nextBtn.addEventListener("click", nextQuestion);
+  nextBtn.addEventListener("click", handleNextClick);
   retryBtn.addEventListener("click", () => {
     showPanel(introPanel);
   });

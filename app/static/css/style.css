@@ -239,6 +239,7 @@ main {
   cursor: pointer;
 }
 .choice-btn:hover { border-color: var(--subject-color); }
+.choice-btn.chosen { border-color: var(--subject-color); background: #f1f5f9; }
 .choice-btn.correct { border-color: var(--success); background: #dcfce7; }
 .choice-btn.incorrect { border-color: var(--error); background: #fee2e2; }
 .choice-btn:disabled { cursor: default; opacity: 0.85; }
@@ -246,6 +247,7 @@ main {
 .feedback { font-weight: 700; padding: 0.75rem 1rem; border-radius: 10px; }
 .feedback.correct { background: #dcfce7; color: #166534; }
 .feedback.incorrect { background: #fee2e2; color: #991b1b; }
+.feedback.warning { background: #fef3c7; color: #92400e; }
 
 .score-summary { font-size: 1.2rem; font-weight: 700; }
 
@@ -403,4 +405,11 @@ main {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 0.35rem;
+}
+.import-thumb {
+  max-width: 80px;
+  max-height: 80px;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
 }

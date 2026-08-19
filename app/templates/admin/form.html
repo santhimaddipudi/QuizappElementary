@@ -5,7 +5,7 @@
     <h1>{{ 'Edit' if question else 'Add' }} Question</h1>
   </section>
 
-  <form class="question-form" method="post">
+  <form class="question-form" method="post" enctype="multipart/form-data">
     <label for="subject_id">Subject</label>
     <select id="subject_id" name="subject_id" required onchange="showTopics()">
       {% for s in subjects %}
@@ -52,15 +52,18 @@
       {% endfor %}
     </select>
 
-    <label for="image_path">Diagram/chart image (optional)</label>
-    <input id="image_path" name="image_path" placeholder="img/diagrams/your_file.svg"
-           value="{{ question['image_path'] if question and question['image_path'] else '' }}"
-           oninput="updateImagePreview()">
+    <label for="image_file">Diagram/chart image (optional)</label>
+    <input id="image_file" name="image_file" type="file" accept="image/*" onchange="updateImagePreviewFromFile()">
     <p class="field-hint">
-      Path to an image file inside <code>app/static/</code> — e.g. drop a PNG/SVG into
-      <code>app/static/img/diagrams/</code> and enter <code>img/diagrams/your_file.svg</code> here.
-      Leave blank for a text-only question.
+      Upload a PNG/JPG/GIF/WEBP/SVG and it'll be attached to this question automatically.
+      Leave blank to keep a text-only question{{ ' or the current image below' if question and question['image_path'] else '' }}.
     </p>
+    <details class="field-hint">
+      <summary>Advanced: use a path to a file already in app/static/ instead</summary>
+      <input id="image_path" name="image_path" placeholder="img/diagrams/your_file.svg"
+             value="{{ question['image_path'] if question and question['image_path'] else '' }}"
+             oninput="updateImagePreviewFromPath()">
+    </details>
     <img id="image-preview" class="image-preview" alt="Preview"
          src="{{ url_for('static', filename=question['image_path']) if question and question['image_path'] else '' }}"
          {{ '' if question and question['image_path'] else 'hidden' }}>
@@ -110,7 +113,7 @@
     }
     showTopics();
 
-    function updateImagePreview() {
+    function updateImagePreviewFromPath() {
       const path = document.getElementById('image_path').value.trim();
       const preview = document.getElementById('image-preview');
       if (path) {
@@ -118,6 +121,16 @@
         preview.hidden = false;
       } else {
         preview.hidden = true;
+      }
+    }
+
+    function updateImagePreviewFromFile() {
+      const fileInput = document.getElementById('image_file');
+      const preview = document.getElementById('image-preview');
+      const file = fileInput.files[0];
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.hidden = false;
       }
     }
   </script>

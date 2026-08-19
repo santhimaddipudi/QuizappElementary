@@ -21,13 +21,20 @@
   {% if questions %}
     <table class="admin-table">
       <thead>
-        <tr><th>#</th><th>Question</th><th>Choices</th><th>Answer</th><th>Topic</th><th>Difficulty</th></tr>
+        <tr><th>#</th><th>Question</th><th>Image</th><th>Choices</th><th>Answer</th><th>Topic</th><th>Difficulty</th></tr>
       </thead>
       <tbody>
         {% for q in questions %}
           <tr>
             <td>{{ loop.index }}</td>
             <td class="q-text">{{ q['question_text'] }}</td>
+            <td>
+              {% if q['image_b64'] %}
+                <img class="import-thumb" src="data:image/{{ q['image_ext'] }};base64,{{ q['image_b64'] }}" alt="Question image">
+              {% else %}
+                —
+              {% endif %}
+            </td>
             <td>A) {{ q['choice_a'] }}<br>B) {{ q['choice_b'] }}<br>C) {{ q['choice_c'] }}<br>D) {{ q['choice_d'] }}</td>
             <td>{{ q['correct_choice'] }}</td>
             <td>{{ q['topic_name'] or '—' }}</td>
